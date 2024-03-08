@@ -5,8 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.shoppingapp.DBHelper;
 import com.example.shoppingapp.R;
@@ -47,21 +50,22 @@ public class LoginActivity extends AppCompatActivity
 
     private boolean validateLogin()
     {
-        boolean nameIsEmpty = name.getText().toString().isEmpty();
-        boolean passwordIsEmpty = password.getText().toString().isEmpty();
+        boolean nameIsEmpty = TextUtils.isEmpty(name.getText().toString().trim());
+        boolean passwordIsEmpty = TextUtils.isEmpty(password.getText().toString().trim());
+
         if(nameIsEmpty || passwordIsEmpty)
         {
-           if(nameIsEmpty)
-           {
-               nameLayout.setErrorEnabled(true);
-               nameLayout.setError("Field can't be empty");
-           }
+            if(nameIsEmpty)
+            {
+                nameLayout.setErrorEnabled(true);
+                nameLayout.setError("Field can't be empty");
+            }
 
-           if(passwordIsEmpty)
-           {
-               passwordLayout.setErrorEnabled(true);
-               passwordLayout.setError("Field can't be empty");
-           }
+            if(passwordIsEmpty)
+            {
+                passwordLayout.setErrorEnabled(true);
+                passwordLayout.setError("Field can't be empty");
+            }
 
             return false;
         }
@@ -73,20 +77,17 @@ public class LoginActivity extends AppCompatActivity
 
     public void loginBtn(View v)
     {
-        String nameInput = name.getText().toString().trim();
-        String passwordInput = password.getText().toString().trim();
-
         if(validateLogin())
         {
-           if(checkLogin(nameInput, passwordInput))
-           {
-               Intent i = new Intent(LoginActivity.this, MainActivity.class);
-               startActivity(i);
-           }
-           else
-           {
+            String nameInput = name.getText().toString().trim();
+            String passwordInput = password.getText().toString().trim();
 
-           }
+            if(checkLogin(nameInput, passwordInput))
+            {
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                intent.putExtra("name", nameInput);
+                startActivity(intent);
+            }
         }
     }
 
@@ -99,35 +100,14 @@ public class LoginActivity extends AppCompatActivity
     private boolean checkLogin(String name, String password)
     {
         Cursor cursor = mainDB.readData(name, password);
-        boolean checkLogin = false;
-
-        while(cursor.moveToNext())
+        if(cursor.getCount() != 0)
         {
-            String nameDB = cursor.getString(cursor.getColumnIndexOrThrow("username"));
-            String passwordDB = cursor.getString(cursor.getColumnIndexOrThrow("password"));
-            boolean nameIsMatched = nameDB.equals(name);
-            boolean passwordIsMatched = passwordDB.equals(password);
-
-            if(!nameIsMatched || !passwordIsMatched)
-            {
-                if(!nameIsMatched)
-                {
-                    nameLayout.setErrorEnabled(true);
-                    nameLayout.setError("Wrong username");
-                }
-
-                if(!passwordIsMatched)
-                {
-                    passwordLayout.setErrorEnabled(true);
-                    passwordLayout.setError("Wrong password");
-                }
-                return false;
-
-            }
-
+            nameLayout.setErrorEnabled(false);
+            return true;
         }
-        nameLayout.setErrorEnabled(false);
-        passwordLayout.setErrorEnabled(false);
-        return true;
+        cursor.close();
+        nameLayout.setErrorEnabled(true);
+        nameLayout.setError("No user found");
+        return false;
     }
 }

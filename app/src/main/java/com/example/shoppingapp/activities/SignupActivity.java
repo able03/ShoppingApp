@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -41,15 +42,20 @@ public class SignupActivity extends AppCompatActivity
         password = findViewById(R.id.tiPassword2);
         conPassword = findViewById(R.id.tiConfirmPassword);
 
+        mainDB = new DBHelper(this);
+
     }
 
     private boolean validateSignup()
     {
-        boolean nameIsEmpty = name.getText().toString().isEmpty();
-        boolean passwordIsEmpty = password.getText().toString().isEmpty();
-        boolean conPasswordIsEmpty = conPassword.getText().toString().isEmpty();
+        boolean nameIsEmpty = TextUtils.isEmpty(name.getText().toString());
+        boolean passwordIsEmpty = TextUtils.isEmpty(password.getText().toString());
+        boolean conPasswordIsEmpty = TextUtils.isEmpty(conPassword.getText().toString());
 
-        if(nameIsEmpty || passwordIsEmpty || conPasswordIsEmpty)
+        String passwordInput = password.getText().toString().trim();
+        String conPasswordInput = conPassword.getText().toString().trim();
+
+        if(nameIsEmpty || passwordIsEmpty || conPasswordIsEmpty || !passwordInput.equals(conPasswordInput))
         {
             if(nameIsEmpty)
             {
@@ -63,10 +69,15 @@ public class SignupActivity extends AppCompatActivity
                 passwordLayout.setError("Field can't be empty");
             }
 
-            if(conPasswordIsEmpty)
-            {
+            if(conPasswordIsEmpty){
                 conPasswordLayout.setErrorEnabled(true);
                 conPasswordLayout.setError("Field can't be empty");
+            }
+
+            if(!passwordInput.equals(conPasswordInput))
+            {
+                conPasswordLayout.setErrorEnabled(true);
+                conPasswordLayout.setError("Password does not match");
             }
 
             return false;
@@ -80,9 +91,6 @@ public class SignupActivity extends AppCompatActivity
 
     public void signupBtnSU(View v)
     {
-        Log.d("SignupActivity", "signupBtnSU running");
-        mainDB = new DBHelper(SignupActivity.this);
-
         if(validateSignup())
         {
             String nameInput = name.getText().toString().trim();
@@ -91,40 +99,31 @@ public class SignupActivity extends AppCompatActivity
             if(checkUsernameIfExists(nameInput))
             {
                 mainDB.addData(nameInput, passwordInput);
-
-                Toast.makeText(this, "Sign up success", Toast.LENGTH_SHORT).show();
-
                 finish();
             }
-            else
-            {
-                Toast.makeText(this, "FUCKING FAILED PUTA", Toast.LENGTH_SHORT).show();
-            }
         }
-
     }
 
     public void loginBtnSU(View v)
     {
-        Intent i = new Intent(SignupActivity.this, LoginActivity.class);
-        startActivity(i);
+//        Intent i = new Intent(SignupActivity.this, LoginActivity.class);
+//        startActivity(i);
+        finish();
     }
 
     private boolean checkUsernameIfExists(String username)
     {
-        mainDB = new DBHelper(SignupActivity.this);
-        Cursor cursor = mainDB.readData(username);
-        String name = cursor.getString(cursor.getColumnIndexOrThrow("username"));
+        String nameInput = name.getText().toString().trim();
+        Cursor cursor = mainDB.readData(nameInput);
 
-        if(!name.equals(username))
+        if(cursor.getCount() == 0)
         {
             nameLayout.setErrorEnabled(false);
             return true;
         }
-
-        nameLayout.setErrorEnabled(true);
-        nameLayout.setError("Username already exist");
         cursor.close();
+        nameLayout.setErrorEnabled(true);
+        nameLayout.setError("Username already exists");
         return false;
     }
 
