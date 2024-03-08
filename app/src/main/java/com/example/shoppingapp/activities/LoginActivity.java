@@ -77,14 +77,19 @@ public class LoginActivity extends AppCompatActivity
 
     public void loginBtn(View v)
     {
+        //check if the fields are empty
         if(validateLogin())
         {
             String nameInput = name.getText().toString().trim();
             String passwordInput = password.getText().toString().trim();
 
+            //check if the name and password are matched to an existing
+            //account in the database
             if(checkLogin(nameInput, passwordInput))
             {
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+
+                //will pass the name in the profile fragment
                 intent.putExtra("name", nameInput);
                 startActivity(intent);
             }
@@ -99,6 +104,8 @@ public class LoginActivity extends AppCompatActivity
 
     private boolean checkLogin(String name, String password)
     {
+        //cursor will return zero (0) if there
+        //is no account existing in the database
         Cursor cursor = mainDB.readData(name, password);
         if(cursor.getCount() != 0)
         {

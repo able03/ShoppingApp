@@ -31,6 +31,7 @@ public class ProfileFragment extends Fragment
         super.onViewCreated(view, savedInstanceState);
         initValues();
 
+        //will get the string passed from the login activity
         String name = getActivity().getIntent().getStringExtra("name");
         profile_name.setText(name);
     }
