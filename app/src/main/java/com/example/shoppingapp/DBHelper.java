@@ -23,6 +23,20 @@ public class DBHelper extends SQLiteOpenHelper
             COLUMN_NAME + " VARCHAR(50), " + COLUMN_PASSWORD + " VARCHAR(100))";
     private final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME + "";
 
+    private final String TABLE_NAME_CART = "item";
+    private final String COLUMN_ID_CART = "cart_id";
+    private final String COLUMN_NAME_CART = "cart_name";
+    private final String COLUMN_QTY = "quantity";
+    private final String COLUMN_PRICE = "price";
+    private final String COLUMN_IMAGE = "image";
+
+    private String CREATE_TBL_CART_ITEM  = "CREATE TABLE " + TABLE_NAME_CART +
+            " (" + COLUMN_ID_CART + " INTEGER PRIMARY KEY AUTOINCREMENT, "  +
+            COLUMN_NAME_CART + " VARCHAR(50), " + COLUMN_QTY + " INTEGER, " +
+            COLUMN_PRICE + " DOUBLE, " + COLUMN_IMAGE + " INTEGER)";
+
+    private String DROP_TBL_CART_ITEM = "DROP TABLE IF EXISTS " + TABLE_NAME_CART + "";
+
     public DBHelper(@Nullable Context context)
     {
         super(context, DB_NAME, null, DB_VER);
@@ -33,12 +47,14 @@ public class DBHelper extends SQLiteOpenHelper
     public void onCreate(SQLiteDatabase db)
     {
         db.execSQL(CREATE_DB_QUERY);
+        db.execSQL(CREATE_TBL_CART_ITEM);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
         db.execSQL(DROP_TABLE);
+        db.execSQL(DROP_TBL_CART_ITEM);
         onCreate(db);
     }
 
@@ -83,5 +99,46 @@ public class DBHelper extends SQLiteOpenHelper
         return db.query(TABLE_NAME, columns, selection, selectionArgs, null, null, null);
     }
 
+
+    public void addCartData(String name)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NAME_CART, name);
+
+        long i = db.insert(TABLE_NAME_CART, null, values);
+        if(i != -1)
+        {
+            Toast.makeText(context, "Add success", Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            Toast.makeText(context, "Add failed", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public Cursor readCartData()
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] columns = {COLUMN_NAME_CART};
+
+        return db.query(TABLE_NAME_CART, columns, null, null, null, null, null);
+    }
+
+    public void deleteCartData(String name)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String[] column = {COLUMN_NAME_CART};
+        String selection = COLUMN_NAME_CART + " = ?";
+        String[] selectionArgs = {name};
+
+        int i = db.delete(TABLE_NAME_CART, selection, selectionArgs);
+        if(i > 0)
+        {
+            Toast.makeText(context, "Delete success", Toast.LENGTH_SHORT).show();
+        }else {
+            Toast.makeText(context, "Delete failed", Toast.LENGTH_SHORT).show();
+        }
+    }
 
 }

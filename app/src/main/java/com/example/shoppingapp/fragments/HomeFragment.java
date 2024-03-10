@@ -1,21 +1,24 @@
 package com.example.shoppingapp.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-import com.example.shoppingapp.ItemAdapter;
+import com.example.shoppingapp.activities.ItemClickedActivity;
+import com.example.shoppingapp.activities.MainActivity;
+import com.example.shoppingapp.adapters.ItemAdapter;
 import com.example.shoppingapp.R;
 import com.example.shoppingapp.models.ItemModel;
 
@@ -40,13 +43,13 @@ public class HomeFragment extends Fragment
        return view;
     }
 
-    private void initValues()
-    {
-        searchView = (SearchView) getActivity().findViewById(R.id.search_view);
-        itemList = new ArrayList<>();
-        itemAdapter = new ItemAdapter();
-        recyclerView = (RecyclerView) getActivity().findViewById(R.id.itemRV);
-    }
+//    private void initValues()
+//    {
+//        searchView = (SearchView) getActivity().findViewById(R.id.search_view);
+//        itemList = new ArrayList<>();
+//        itemAdapter = new ItemAdapter(getContext());
+//        recyclerView = (RecyclerView) getActivity().findViewById(R.id.itemRV);
+//    }
 
     private void filteredList(String newText)
     {
@@ -78,7 +81,7 @@ public class HomeFragment extends Fragment
         searchView = view.findViewById(R.id.search_view);
         searchView.clearFocus();
         recyclerView = view.findViewById(R.id.itemRV);
-        itemAdapter = new ItemAdapter();
+        itemAdapter = new ItemAdapter(this.getContext());
 
         int img = R.drawable.ic_item1;
 
@@ -109,7 +112,6 @@ public class HomeFragment extends Fragment
                 return true;
             }
         });
-
 
 
     }
