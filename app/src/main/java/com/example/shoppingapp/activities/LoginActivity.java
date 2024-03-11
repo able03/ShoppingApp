@@ -91,6 +91,7 @@ public class LoginActivity extends AppCompatActivity
 
                 //will pass the name in the profile fragment
                 intent.putExtra("name", nameInput);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
             }
         }
@@ -99,6 +100,7 @@ public class LoginActivity extends AppCompatActivity
     public void signupBtn(View v)
     {
         Intent i = new Intent(LoginActivity.this, SignupActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(i);
     }
 

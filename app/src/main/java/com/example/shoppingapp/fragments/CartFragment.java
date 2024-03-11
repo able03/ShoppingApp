@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.shoppingapp.DBHelper;
-import com.example.shoppingapp.ItemDBHelper;
 import com.example.shoppingapp.R;
 import com.example.shoppingapp.adapters.CartAdapter;
 import com.example.shoppingapp.models.ItemCartModel;
