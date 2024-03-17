@@ -9,14 +9,15 @@
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
-        android:layout_height="600dp">
-    </FrameLayout>
+        android:layout_height="match_parent"
+        android:layout_above="@id/coord"/>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="20dp"
         android:layout_alignParentBottom="true"
+        android:id="@+id/coord"
         >
 
         <com.google.android.material.bottomappbar.BottomAppBar
